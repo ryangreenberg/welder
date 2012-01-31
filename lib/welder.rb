@@ -1,4 +1,6 @@
 require "welder/version"
 
-module Welder
-end
+require "welder/game"
+require "welder/board"
+require "welder/tile"
+require "welder/dictionary"
