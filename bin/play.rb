@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby -wKU -rubygems
 
 require 'welder'
-require "benchmark"
-require 'set'
 
 def error_and_exit(msg)
   puts msg
@@ -16,4 +14,9 @@ words = File.read(dictionary_file).split("\n").map {|w| w.strip}
 dictionary = Welder::Dictionary.new(words)
 game = Welder::Game.new(8, dictionary)
 game.populate
-game.detect_words
+
+puts "BOARD"
+puts game.board.to_s
+
+puts "\nWORDS"
+puts game.detect_words.map{|w| w.to_s}.inspect
