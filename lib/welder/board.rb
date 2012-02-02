@@ -5,11 +5,11 @@ class Welder::Board
   end
 
   def get_tile(x, y)
-    @board[x][y]
+    @board[y][x]
   end
 
   def set_tile(x, y, tile)
-    @board[x][y] = tile
+    @board[y][x] = tile
   end
 
   def possible_words(min_word_length=4)
