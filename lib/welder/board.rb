@@ -15,10 +15,12 @@ class Welder::Board
   def possible_words(min_word_length=4)
     words = []
 
-    each_row_and_col do |row|
+    each_row_and_col do |row_or_col, orientation|
       0.upto(@size - min_word_length) do |start_char|
         (start_char + min_word_length).upto(@size) do |end_char|
-          words.push(row.slice(start_char...end_char).join)
+          tiles = row_or_col.slice(start_char...end_char)
+          word = Welder::Word.new(tiles, start_char, end_char, orientation)
+          words.push(word)
         end
       end
     end
@@ -35,8 +37,8 @@ class Welder::Board
   end
 
   def each_row_and_col
-    each_row {|row| yield row }
-    each_col {|col| yield col }
+    each_row {|row| yield row, :horizontal }
+    each_col {|col| yield col, :vertical }
   end
 
   def cols
@@ -50,6 +52,6 @@ class Welder::Board
   end
 
   def size
-    @board.length
+    @size
   end
 end
