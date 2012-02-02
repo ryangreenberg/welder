@@ -11,4 +11,8 @@ class Welder::Tile
   def value
     LETTER_VALUES[@letter]
   end
+
+  def to_s
+    @letter
+  end
 end
