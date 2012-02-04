@@ -124,4 +124,27 @@ describe Welder::Board do
       end
     end
   end
+
+  describe "#drop_tiles" do
+    it "moves all tiles on board so that no tile has a blank space below/south of it" do
+      letters = <<-EOS
+        abcd
+        ef..
+        g.h.
+        ....
+      EOS
+      tiles = get_tiles_for_string(letters)
+      board = get_board_for_tiles(tiles)
+
+      board.drop_tiles
+
+      dropped_letters = <<-EOS.gsub(/^\s*|\s*$/, '')
+        ....
+        a...
+        ebc.
+        gfhd
+      EOS
+      board.to_s.should == dropped_letters
+    end
+  end
 end

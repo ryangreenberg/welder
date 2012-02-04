@@ -31,6 +31,15 @@ class Welder::Board
     true
   end
 
+  def drop_tiles
+    each_col_with_index do |col, x|
+      empty_tiles, letter_tiles = col.partition {|tile| tile.empty?}
+      (empty_tiles + letter_tiles).each_with_index do |tile, y|
+        set_tile(x, y, tile)
+      end
+    end
+  end
+
   def possible_words(min_word_length=4)
     words = []
 

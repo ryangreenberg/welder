@@ -15,4 +15,8 @@ class Welder::Tile
   def to_s
     @letter
   end
+
+  def empty?
+    false
+  end
 end
