@@ -12,6 +12,17 @@ class Welder::Board
     @board[y][x] = tile
   end
 
+  def swap(x1, y1, direction)
+    x2, y2 = get_neighbor(x1, y1, direction)
+    return false if invalid_dest_coords?(x2, y2)
+
+    @tile1 = get_tile(x1, y1)
+    @tile2 = get_tile(x2, y2)
+    set_tile(x2, y2, @tile1)
+    set_tile(x1, y1, @tile2)
+    true
+  end
+
   def possible_words(min_word_length=4)
     words = []
 
@@ -47,11 +58,42 @@ class Welder::Board
     num_cols.times.map {|i| @board.map{|row| row[i]}}
   end
 
+  def populate
+    num_cols = @board[0].length
+    num_rows = @board.length
+
+    num_rows.times do |y|
+      num_cols.times do |x|
+        tile = yield x, y
+        set_tile(x, y, tile)
+      end
+    end
+  end
+
   def to_s
     @board.map {|row| row.join("")}.join("\n")
   end
 
   def size
     @size
+  end
+
+  private
+
+  def get_neighbor(x, y, direction)
+    case direction
+      when :north,     :n,  :up         then [x, y - 1]
+      when :south,     :s,  :down       then [x, y + 1]
+      when :east,      :e,  :right      then [x + 1, y]
+      when :west,      :w,  :left       then [x - 1, y]
+      when :northeast, :ne, :up_right   then [x + 1, y - 1]
+      when :northwest, :nw, :up_left    then [x - 1, y - 1]
+      when :southeast, :se, :down_right then [x + 1, y + 1]
+      when :southwest, :sw, :down_left  then [x - 1, y + 1]
+    end
+  end
+
+  def invalid_dest_coords?(x, y)
+    x < 0 || y < 0 || x >= @board.size || y >= @board.size
   end
 end
