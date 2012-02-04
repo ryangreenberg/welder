@@ -2,21 +2,22 @@ require 'spec_helper'
 
 describe Welder::Board do
   it "has a coordinate system zero-indexed from the top-left" do
-    letters = <<-EOS.gsub(/^\s*/, '').strip
+    letters = <<-EOS
       abcd
       efgh
       ijkl
       mnop
     EOS
-    board = Welder::Board.new(4)
-    rows = letters.split("\n")
-    rows.each_with_index do |chars, y|
-      chars.split("").each_with_index do |char, x|
-        tile = Welder::Tile.new(char)
-        board.set_tile(x, y, tile)
+    tiles = get_tiles_for_string(letters)
+    board = get_board_for_tiles(tiles)
+
+    tiles.each_with_index do |row, y|
+      row.each_with_index do |tile, x|
+        board.get_tile(x, y).should == tiles[y][x]
       end
     end
-    board.to_s.should == letters
+
+    board.to_s.should == letters.gsub(/^\s*|\s*$/, '')
   end
 
   describe "#populate" do
