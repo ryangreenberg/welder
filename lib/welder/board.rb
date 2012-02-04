@@ -4,6 +4,14 @@ class Welder::Board
     @board = size.times.map { Array.new(size) }
   end
 
+  def to_s
+    @board.map {|row| row.join("")}.join("\n")
+  end
+
+  def size
+    @size
+  end
+
   def get_tile(x, y)
     @board[y][x]
   end
