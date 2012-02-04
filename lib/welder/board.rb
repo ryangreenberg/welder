@@ -39,44 +39,43 @@ class Welder::Board
     words
   end
 
-  def each_row
-    @board.each {|row| yield row }
-  end
+  module Iterators
+    def each_row
+      @board.each {|row| yield row }
+    end
 
-  def each_col
-    cols.each {|col| yield col }
-  end
+    def each_col
+      cols.each {|col| yield col }
+    end
 
-  def each_row_and_col
-    each_row {|row| yield row, :horizontal }
-    each_col {|col| yield col, :vertical }
-  end
+    def each_col_with_index
+      cols.each_with_index {|col, index| yield col, index }
+    end
 
-  def cols
-    num_cols = @board[0].length
-    num_rows = @board.length
-    num_cols.times.map {|i| @board.map{|row| row[i]}}
-  end
+    def each_row_and_col
+      each_row {|row| yield row, :horizontal }
+      each_col {|col| yield col, :vertical }
+    end
 
-  def populate
-    num_cols = @board[0].length
-    num_rows = @board.length
+    def cols
+      num_cols = @board[0].length
+      num_rows = @board.length
+      num_cols.times.map {|i| @board.map{|row| row[i]}}
+    end
 
-    num_rows.times do |y|
-      num_cols.times do |x|
-        tile = yield x, y
-        set_tile(x, y, tile)
+    def populate
+      num_cols = @board[0].length
+      num_rows = @board.length
+
+      num_rows.times do |y|
+        num_cols.times do |x|
+          tile = yield x, y
+          set_tile(x, y, tile)
+        end
       end
     end
   end
-
-  def to_s
-    @board.map {|row| row.join("")}.join("\n")
-  end
-
-  def size
-    @size
-  end
+  include Iterators
 
   private
 
