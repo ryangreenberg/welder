@@ -36,6 +36,7 @@ class Welder::WeightedArray
 
     items.last[:value] if items.size > 0
   end
+  alias :choice :sample
 
   private
 
