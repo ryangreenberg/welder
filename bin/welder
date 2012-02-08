@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby -wKU -rubygems
 
+require 'yaml'
+require 'optparse'
 require 'welder'
 
 def error_and_exit(msg)
@@ -7,12 +9,44 @@ def error_and_exit(msg)
   exit(1)
 end
 
-dictionary_file = ARGV.last
-error_and_exit("Cannot load dictionary file") unless File.exist?(dictionary_file)
+def get_cli_options(args, version)
+  options = {}
+
+  optparse = OptionParser.new do|opts|
+    opts.banner = "Usage: welder [options]"
+
+    opts.on( '-d', '--dictionary FILE', 'File containing a new-line separated list of words' ) do |file|
+      options[:dictionary] = file
+    end
+
+    opts.on( '-w', '--weights FILE', 'YAML file containing a mapping of tile weights' ) do |file|
+      options[:weights] = file
+    end
+  end
+  optparse.version = version
+  optparse.release = nil
+
+  optparse.parse(args)
+  options
+end
+
+options = get_cli_options(ARGV, Welder::VERSION)
+dictionary_file = options[:dictionary]
+weights_file = options[:weights]
+error_and_exit("Cannot load dictionary file") unless dictionary_file && File.exist?(dictionary_file)
 
 words = File.read(dictionary_file).split("\n").map {|w| w.strip}
 dictionary = Welder::Dictionary.new(words)
-game = Welder::Game.new(8, dictionary)
+
+tile_weights = if weights_file
+  YAML.load_file(weights_file).to_a
+else
+  letters = ("a".."z")
+  letters.zip( letters.to_a.size.times.map { 1 })
+end
+tile_generator = Welder::TileGenerator.new(tile_weights)
+
+game = Welder::Game.new(8, dictionary, tile_generator)
 game.populate
 
 puts "BOARD"

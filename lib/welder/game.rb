@@ -6,16 +6,16 @@ class Welder::Game
   attr_reader :board
   def_delegator :board, :swap
 
-  def initialize(board_size, dictionary)
-    @dictionary = dictionary
+  def initialize(board_size, dictionary, tile_generator)
     @board = Welder::Board.new(board_size)
+    @dictionary = dictionary
+    @tile_generator = tile_generator
   end
 
   def populate
-    weighted_letters = ("aeiou" * 8 + "dlnrst" * 4 + "bcfghkmpwxy" * 2 + "jqvz").split("")
     @board.size.times do |i|
       @board.size.times do |j|
-        @board.set_tile(i, j, Welder::Tile.new(weighted_letters.choice))
+        @board.set_tile(i, j, Welder::Tile.new(@tile_generator.get_tile))
       end
     end
   end

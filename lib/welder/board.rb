@@ -5,7 +5,7 @@ class Welder::Board
   end
 
   def to_s
-    @board.map {|row| row.join("")}.join("\n")
+    @board.map {|row| row.map{|tile| tile.to_s}.join("")}.join("\n")
   end
 
   def size
