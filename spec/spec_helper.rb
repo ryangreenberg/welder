@@ -22,3 +22,7 @@ def get_tiles_for_string(str)
     end
   end
 end
+
+def get_board_for_string(str)
+  get_board_for_tiles(get_tiles_for_string(str))
+end
