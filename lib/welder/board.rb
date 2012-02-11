@@ -76,11 +76,16 @@ class Welder::Board
   def possible_words(min_word_length=4)
     words = []
 
-    each_row_and_col do |row_or_col, orientation|
+    each_row_and_col_with_index do |row_or_col, index, orientation|
       0.upto(@size - min_word_length) do |start_char|
         (start_char + min_word_length).upto(@size) do |end_char|
           tiles = row_or_col.slice(start_char...end_char)
-          word = Welder::Word.new(tiles, start_char, end_char, orientation)
+          if orientation == :horizontal
+            x, y = start_char, index
+          else
+            x, y = index, start_char
+          end
+          word = Welder::Word.new(tiles, x, y, orientation)
           words.push(word)
         end
       end
@@ -91,11 +96,15 @@ class Welder::Board
 
   module Iterators
     def each_row
-      @board.each {|row| yield row }
+      rows.each {|row| yield row }
     end
 
     def each_col
       cols.each {|col| yield col }
+    end
+
+    def each_row_with_index
+      rows.each_with_index {|row, index| yield row, index }
     end
 
     def each_col_with_index
@@ -105,6 +114,11 @@ class Welder::Board
     def each_row_and_col
       each_row {|row| yield row, :horizontal }
       each_col {|col| yield col, :vertical }
+    end
+
+    def each_row_and_col_with_index
+      each_row_with_index {|row, index| yield row, index, :horizontal }
+      each_col_with_index {|col, index| yield col, index, :vertical }
     end
 
     def rows

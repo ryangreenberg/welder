@@ -188,6 +188,47 @@ describe Welder::Board do
     end
   end
 
+  describe "#possible_words" do
+    it "returns all the words on the board with the given minimum length" do
+      board = get_board_for_string <<-EOS
+        abc
+        def
+        ghi
+      EOS
+
+      possible_words = board.possible_words(2)
+      possible_word_strings = possible_words.map{|w| w.to_s}
+      %w|ab bc de ef gh hi ad dg be eh cf fi|.each do |expected_word|
+        possible_word_strings.should include(expected_word)
+      end
+    end
+
+    it "returns words with their position on the board" do
+      board = get_board_for_string <<-EOS
+        abc
+        def
+        ghi
+      EOS
+
+      possible_words = board.possible_words(2)
+      word_ab = possible_words.detect {|w| w.to_s == 'ab'}
+      word_ab.x.should == 0
+      word_ab.y.should == 0
+
+      word_cf = possible_words.detect {|w| w.to_s == 'cf'}
+      word_cf.x.should == 2
+      word_cf.y.should == 0
+
+      word_dg = possible_words.detect {|w| w.to_s == 'dg'}
+      word_dg.x.should == 0
+      word_dg.y.should == 1
+
+      word_hi = possible_words.detect {|w| w.to_s == 'hi'}
+      word_hi.x.should == 1
+      word_hi.y.should == 2
+    end
+  end
+
   describe "#drop_tiles" do
     it "moves all tiles on board so that no tile has a blank space below/south of it" do
       letters = <<-EOS
