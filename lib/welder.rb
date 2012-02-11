@@ -1,5 +1,6 @@
 require "welder/version"
 
+require "welder/constants"
 require "welder/game"
 require "welder/board"
 require "welder/tile"

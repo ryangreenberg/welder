@@ -125,6 +125,69 @@ describe Welder::Board do
     end
   end
 
+  describe "#get_word" do
+    before do
+      @board = get_board_for_string <<-EOS
+        abc
+        def
+        ghi
+      EOS
+    end
+
+    it "returns the word of the specified length and orientation at the given position" do
+      @board.get_word(0, 0, :horizontal, 3).to_s.should == "abc"
+      @board.get_word(0, 2, :horizontal, 3).to_s.should == "ghi"
+      @board.get_word(0, 0, :vertical, 3).to_s.should == "adg"
+      @board.get_word(2, 0, :vertical, 3).to_s.should == "cfi"
+    end
+
+    it "sets the position of the word on the board" do
+      word = @board.get_word(0, 2, :horizontal, 3)
+      word.x.should == 0
+      word.y.should == 2
+    end
+
+    it "sets the orientation of the word on the board" do
+      word = @board.get_word(0, 2, :horizontal, 3)
+      word.orientation.should == :horizontal
+    end
+
+    it "returns false if the specified row or colum doesn't exist" do
+      @board.get_word(0, 3, :horizontal, 3).should == false
+      @board.get_word(3, 0, :vertical, 3).should == false
+      @board.get_word(3, 3, :horizontal, 3).should == false
+      @board.get_word(3, 3, :vertical, 3).should == false
+    end
+
+    it "returns false if the specified length run off the board" do
+      @board.get_word(0, 0, :horizontal, 4).should == false
+      @board.get_word(0, 0, :vertical, 4).should == false
+    end
+
+    it "raises ArgumentError if an invalid orientation is provided" do
+      lambda { @board.get_word(0, 0, :diagonal, 3) }.should raise_error(ArgumentError)
+    end
+  end
+
+  describe "#remove_word" do
+    it "removes the provided word from the board" do
+      board = get_board_for_string <<-EOS
+        abc
+        def
+        ghi
+      EOS
+
+      word = board.get_word(0, 0, :horizontal, 3)
+      board.remove_word(word)
+      board_without_word = <<-EOS.gsub(/^\s*|\s*$/, '')
+        ...
+        def
+        ghi
+      EOS
+      board.to_s.should == board_without_word
+    end
+  end
+
   describe "#drop_tiles" do
     it "moves all tiles on board so that no tile has a blank space below/south of it" do
       letters = <<-EOS

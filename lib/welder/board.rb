@@ -20,6 +20,26 @@ class Welder::Board
     @board[y][x] = tile
   end
 
+  def get_word(x, y, orientation, length)
+    unless Welder::Constants::VALID_ORIENTATIONS.include?(orientation)
+      raise ArgumentError, "invalid orientation '#{orientation}'"
+    end
+
+    if orientation == :horizontal
+      tiles = rows[y]
+      start_char = x
+    elsif orientation == :vertical
+      tiles = cols[x]
+      start_char = y
+    end
+
+    end_char = start_char + length
+    return false if tiles.nil? || end_char > tiles.length
+
+    tiles = tiles.slice(start_char...end_char)
+    word = Welder::Word.new(tiles, x, y, orientation)
+  end
+
   def swap(x1, y1, direction)
     x2, y2 = get_neighbor(x1, y1, direction)
     return false if invalid_dest_coords?(x2, y2)
@@ -29,6 +49,19 @@ class Welder::Board
     set_tile(x2, y2, @tile1)
     set_tile(x1, y1, @tile2)
     true
+  end
+
+  def remove_word(word)
+    if word.orientation == :vertical
+      word.length.times do |i|
+        set_tile(word.x, word.y + i, Welder::EmptyTile.new)
+      end
+    elsif word.orientation == :horizontal
+      word.length.times do |i|
+        x, y = word.x  + i, word.y
+        set_tile(word.x + i, word.y, Welder::EmptyTile.new)
+      end
+    end
   end
 
   def drop_tiles
@@ -72,6 +105,10 @@ class Welder::Board
     def each_row_and_col
       each_row {|row| yield row, :horizontal }
       each_col {|col| yield col, :vertical }
+    end
+
+    def rows
+      @board
     end
 
     def cols
