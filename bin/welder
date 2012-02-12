@@ -53,4 +53,7 @@ puts "BOARD"
 puts game.board.to_s
 
 puts "\nWORDS"
-puts game.detect_words.map{|w| w.to_s}.inspect
+puts game.valid_words_on_board.map{|w| w.to_s}.inspect
+
+game.remove_valid_words
+puts game.board.to_s

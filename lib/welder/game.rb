@@ -1,10 +1,5 @@
-require 'forwardable'
-
 class Welder::Game
-  extend Forwardable
-
   attr_reader :board
-  def_delegator :board, :swap
 
   def initialize(board_size, dictionary, tile_generator)
     @board = Welder::Board.new(board_size)
@@ -13,17 +8,29 @@ class Welder::Game
   end
 
   def populate
-    @board.size.times do |i|
-      @board.size.times do |j|
-        @board.set_tile(i, j, Welder::Tile.new(@tile_generator.get_tile))
-      end
+    @board.populate do |x, y|
+      Welder::Tile.new(@tile_generator.get_tile)
     end
   end
 
-  def detect_words
+  def valid_words_on_board
     possible_words = @board.possible_words
-    valid_words = possible_words.select do |word|
+    possible_words.select do |word|
       @dictionary.include?(word.to_s)
     end
+  end
+
+  def remove_valid_words
+    words_to_remove = valid_words_on_board
+    words_to_remove.each do |word|
+      @board.remove_word(word)
+    end
+    words_to_remove
+  end
+
+  def swap(x, y, direction)
+    @board.swap(x, y, directory)
+    remove_valid_words
+    @board.drop_tiles
   end
 end
