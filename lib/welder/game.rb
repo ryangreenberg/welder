@@ -1,10 +1,15 @@
 class Welder::Game
-  attr_reader :board
+  attr_reader :board, :score
 
-  def initialize(board_size, dictionary, tile_generator)
+  def initialize(board_size, dictionary, rules, tile_generator)
     @board = Welder::Board.new(board_size)
     @dictionary = dictionary
+    @rules = rules
     @tile_generator = tile_generator
+
+    @level = 1
+    @swaps = rules.starting_swaps_for_level(@level)
+    @score = 0
   end
 
   def populate

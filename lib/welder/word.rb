@@ -16,7 +16,7 @@ class Welder::Word
   end
 
   def score
-    @tiles.inject(0) {|sum, tile| sum + tile.value } * @tiles.length
+    @tiles.inject(0) {|sum, tile| sum += tile.value } * @tiles.length
   end
 
   def length
