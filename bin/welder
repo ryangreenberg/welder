@@ -37,6 +37,7 @@ error_and_exit("Cannot load dictionary file") unless dictionary_file && File.exi
 
 words = File.read(dictionary_file).split("\n").map {|w| w.strip}
 dictionary = Welder::Dictionary.new(words)
+rules = Welder::Rules.new
 
 tile_weights = if weights_file
   YAML.load_file(weights_file).to_a
@@ -46,14 +47,15 @@ else
 end
 tile_generator = Welder::TileGenerator.new(tile_weights)
 
-game = Welder::Game.new(8, dictionary, tile_generator)
+game = Welder::Game.new(8, dictionary, rules, tile_generator)
 game.populate
 
-puts "BOARD"
+puts "INITIAL BOARD"
 puts game.board.to_s
 
 puts "\nWORDS"
 puts game.valid_words_on_board.map{|w| w.to_s}.inspect
 
-game.remove_valid_words
+puts "\ngame.ensure_no_valid_words"
+game.ensure_no_valid_words
 puts game.board.to_s
