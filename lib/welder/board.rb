@@ -1,7 +1,7 @@
 class Welder::Board
   def initialize(size = 8)
     @size = size
-    @board = size.times.map { Array.new(size) }
+    @board = size.times.map { size.times.map { Welder::EmptyTile.new } }
   end
 
   def to_s
@@ -18,6 +18,10 @@ class Welder::Board
 
   def set_tile(x, y, tile)
     @board[y][x] = tile
+  end
+
+  def tiles
+    @board.flatten
   end
 
   def get_word(x, y, orientation, length)
@@ -73,7 +77,7 @@ class Welder::Board
     end
   end
 
-  def possible_words(min_word_length=4)
+  def possible_words(min_word_length)
     words = []
 
     each_row_and_col_with_index do |row_or_col, index, orientation|
@@ -138,7 +142,7 @@ class Welder::Board
       num_rows.times do |y|
         num_cols.times do |x|
           tile = yield x, y
-          set_tile(x, y, tile)
+          set_tile(x, y, tile) if tile
         end
       end
     end

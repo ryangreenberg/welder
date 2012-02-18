@@ -49,6 +49,19 @@ describe Welder::Board do
         board.get_tile(x, y).should == tile
       end
     end
+
+    it "does not change the tile if the provided block yields a falsy value" do
+      board = get_board_for_string <<-EOS
+        abc
+        def
+        ghi
+      EOS
+      original_tiles = board.tiles
+      board.populate do |x, y|
+        false
+      end
+      board.tiles.should == original_tiles
+    end
   end
 
   describe "#swap" do
