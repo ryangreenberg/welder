@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Welder::Game do
   before do
-    @board_size = 4
+    @board = Welder::Board.new
     words = ['abc', 'def', 'ghi']
     @dictionary = Welder::Dictionary.new(words)
     @rules = Welder::Rules.new(:min_word_length => 3)
@@ -11,7 +11,7 @@ describe Welder::Game do
 
   describe "#populate" do
     it "fills the board with tiles" do
-      game = Welder::Game.new(@board_size, @dictionary, @rules, @tile_generator)
+      game = Welder::Game.new(@board, @dictionary, @rules, @tile_generator)
       game.board.each_row do |row|
         row.reject {|tile| tile.empty? }.should be_empty
       end
@@ -26,7 +26,7 @@ describe Welder::Game do
 
   describe "#populate_empty" do
     it "fills only empty tiles on the board" do
-      game = Welder::Game.new(@board_size, @dictionary, @rules, @tile_generator)
+      game = Welder::Game.new(@board, @dictionary, @rules, @tile_generator)
       existing_tile = Welder::Tile.new('a')
       game.board.set_tile(0, 0, existing_tile)
       game.populate_empty
@@ -43,7 +43,7 @@ describe Welder::Game do
 
   describe "#ensure_no_valid_words" do
     it "changes the board so that valid_words_on_board is an empty array" do
-      game = Welder::Game.new(@board_size, @dictionary, @rules, @tile_generator)
+      game = Welder::Game.new(@board, @dictionary, @rules, @tile_generator)
 
       # Place valid words on the board
       game.board.set_tile(0, 0, 'a')
@@ -64,7 +64,7 @@ describe Welder::Game do
 
   describe "#add_to_score" do
     it "adds the score of the word to the game score" do
-      game = Welder::Game.new(@board_size, @dictionary, @rules, @tile_generator)
+      game = Welder::Game.new(@board, @dictionary, @rules, @tile_generator)
       game.populate
       game.score.should == 0
       word = game.board.get_word(0, 0, :horizontal, 4)
@@ -73,7 +73,7 @@ describe Welder::Game do
     end
 
     it "adds the multiple_word_bonus for each word in excess of one" do
-      game = Welder::Game.new(@board_size, @dictionary, @rules, @tile_generator)
+      game = Welder::Game.new(@board, @dictionary, @rules, @tile_generator)
       game.populate
       game.score.should == 0
       words = [

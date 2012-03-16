@@ -1,8 +1,8 @@
 class Welder::Game
   attr_reader :board, :score
 
-  def initialize(board_size, dictionary, rules, tile_generator)
-    @board = Welder::Board.new(board_size)
+  def initialize(board, dictionary, rules, tile_generator)
+    @board = board
     @dictionary = dictionary
     @rules = rules
     @tile_generator = tile_generator
