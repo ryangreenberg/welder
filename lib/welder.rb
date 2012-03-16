@@ -10,3 +10,5 @@ require "welder/word"
 require "welder/weighted_array"
 require "welder/tile_generator"
 require "welder/rules"
+
+require "welder/ai/search"
