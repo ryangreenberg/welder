@@ -1,4 +1,6 @@
 class Welder::Board
+  MOVE_DIRECTIONS = [:up, :down, :right, :left, :up_right, :up_left, :down_right, :down_left]
+
   def initialize(size = 8)
     @size = size
     @board = size.times.map { size.times.map { Welder::EmptyTile.new } }
@@ -96,6 +98,18 @@ class Welder::Board
     end
 
     words
+  end
+
+  def all_possible_moves
+    moves = []
+    @size.times do |x|
+      @size.times do |y|
+        MOVE_DIRECTIONS.each do |direction|
+          moves << [x, y, direction]
+        end
+      end
+    end
+    moves
   end
 
   module Iterators

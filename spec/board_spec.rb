@@ -138,6 +138,21 @@ describe Welder::Board do
     end
   end
 
+  describe "#all_possible_moves" do
+    it "lists all possible moves in the form of (num, num, direction)" do
+      board = get_board_for_string("ab\ncd")
+      all_possible_moves = board.all_possible_moves
+      tiles = [[0,0], [0, 1], [1, 0], [1, 1]]
+
+      Welder::Board::MOVE_DIRECTIONS.each do |direction|
+        tiles.each do |tile|
+          expected_move = tile.dup.concat(Array(direction))
+          all_possible_moves.should include(expected_move)
+        end
+      end
+    end
+  end
+
   describe "#get_word" do
     before do
       @board = get_board_for_string <<-EOS
